@@ -12,5 +12,5 @@ e_str = "SELECT * FROM cirium_traffic_europe LIMIT 10"
 cursor.execute(e_str)
 
 print(e_str)
-print(cursor.fetchone())
+print(cursor.fetchall())
 

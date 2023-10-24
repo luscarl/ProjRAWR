@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 from os import environ
+import matplotlib.pyplot as plt
 
 # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -56,10 +57,17 @@ def qryGenerator(qry, interval, year, num):
 
 
 am_df = pd.read_sql_query(text("SELECT * FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0  LIMIT 100000;"), conn)
-am_sc = pd.read_sql_query(text("SELECT * FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01'  LIMIT 100000;"), conn)
-##am_df.plot(kind = 'line', x = 'Year-')
-print(am_df)
-print(am_sc)
+am_df['Year-Month-Day'] = pd.to_datetime(am_df['Year-Month-Day'])
+am_df.set_index('Year-Month-Day', inplace = True)
+am_df = am_df.resample('M').sum()
+plot = am_df.plot(kind = 'line', legend = False)
+plt.title('Monthly Total PAX')
+plt.xlabel('date')
+plt.ylabel('total pax')
+plt.grid(True)
+plt.show()
+plt.savefig('testing.png')
+
 # #Create a metadata object
 # metadata = MetaData()
 

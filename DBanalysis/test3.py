@@ -56,11 +56,9 @@ def qryGenerator(qry, interval, year, num):
 
 
 
-am_df = pd.read_sql_query(text("SELECT * FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0  LIMIT 100000;"), conn)
-am_df['Year-Month-Day'] = pd.to_datetime(am_df['Year-Month-Day'])
-am_df.set_index('Year-Month-Day', inplace = True)
-am_df = am_df.resample('M').sum()
-plot = am_df.plot(kind = 'line', legend = False)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+print(am_df)
+plot = am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
 plt.title('Monthly Total PAX')
 plt.xlabel('date')
 plt.ylabel('total pax')

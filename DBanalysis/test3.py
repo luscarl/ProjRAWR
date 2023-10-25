@@ -54,14 +54,15 @@ def qryGenerator(qry, interval, year, num):
     return 'SELECT ' + qry + "AND \"Year-Month-Day\" " + intv
 
 
-
 am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\"), AVG(\"% POO Orig\")as avg, AVG(\"Rev\") as rev FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
 am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
+
 plt.title('Monthly Total PAX')
 plt.xlabel('date')
 plt.ylabel('total pax')
 plt.grid(True)
 plt.savefig('sum_pax.png')
+plt.show()
 
 plt.title('Monthly Average %POO Origin')
 am_df.plot(x = 'month', y= 'avg', legend = False)
@@ -69,12 +70,14 @@ plt.title('Monthly Average %poo origin')
 plt.xlabel('date')
 plt.ylabel('average %poo origin')
 plt.savefig('avg_pooorig.png')
+plt.show()
 
 am_df.plot(x = 'month', y = 'rev', legend = False)
 plt.title('Monthly average revenue')
 plt.xlabel('date')
 plt.ylabel('average revenue')
 plt.savefig('avg_rev.png')
+plt.show()
 
 # #Create a metadata object
 # metadata = MetaData()

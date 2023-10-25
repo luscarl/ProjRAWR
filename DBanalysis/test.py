@@ -2,21 +2,27 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import Normalizer, OneHotEncoder
 import statsmodels.api as sm
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-pdf = pd.read_csv("traffic_asia_later2021_unique_syd.csv", encoding = 'UTF-8', keep_default_na=False)
-print(pdf.head())
-print(pdf.corr(numeric_only = True))
+def get_data():
+    asia_to_syd_df = pd.read_csv("traffic_asia_later2021_unique_syd.csv", encoding = 'UTF-8')
 
-x = pdf.iloc[:,[10,11]]
-y1 = pdf.iloc[:, 13]
+    X = asia_to_syd_df.drop(['Rev', 'Year-Month-Day'], axis=1)
+    y = asia_to_syd_df['Rev']
 
-print(x)
-print(y1)
+    enc = OneHotEncoder(sparse_output=False)
+
+    encdata = enc.fit_transform
+
+cate_column = ['Mkt Al', 'Orig', 'Dest', 'Op Al', 'Stop-1 Al', 'Stop-1 Airport', 'stop-2 Airport','Year', 'Month', 'Class', 'Year-Month-day']
+
+
+
+'''
 
 X_train, X_test, y1_train, y1_test = train_test_split(x, y1, test_size=0.4, random_state=69)
 
@@ -35,3 +41,4 @@ plt.scatter(residuals, y1_pred)
 plt.xlabel(pdf.columns[12] + ' ' + pdf.columns[10])
 plt.ylabel(pdf.columns[13])
 plt.show()
+'''

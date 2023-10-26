@@ -1,7 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
-from os import environ
 import matplotlib.pyplot as plt
 
 # Define your PostgreSQL database connection
@@ -55,15 +54,14 @@ def qryGenerator(qry, interval, year, num):
     return 'SELECT ' + qry + "AND \"Year-Month-Day\" " + intv
 
 
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\"), AVG(\"% POO Orig\")as avg, AVG(\"Rev\") as rev FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-07-01' AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df.plot(kind = 'line', x = 'month',y = 'sum', c = '#294173', legend = False)
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\"), AVG(\"% POO Orig\") as avg FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
 plt.title('Monthly Total PAX')
 plt.xlabel('date')
 plt.ylabel('total pax')
-plt.grid(True)
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_pax.png')
-plt.show()
 
 plt.title('Monthly Average %POO Origin')
 am_df.plot(x = 'month', y= 'avg', legend = False)
@@ -71,27 +69,12 @@ plt.title('Monthly Average %poo origin')
 plt.xlabel('date')
 plt.ylabel('average %poo origin')
 plt.savefig('avg_pooorig.png')
-plt.show()
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, AVG(\"Yield\") FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Yield\" >0 GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
-print(am_df)
-plot = am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
-plt.title('Monthly Total PAX')
+am_df.plot(x = 'month', y = 'rev', legend = False)
+plt.title('Monthly average revenue')
 plt.xlabel('date')
-plt.ylabel('average yield')
-plt.grid(True)
-plt.show()
-plt.savefig('testing.png')
-
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Seats\" >0 GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
-print(am_df)
-plot = am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
-plt.title('Monthly Total PAX')
-plt.xlabel('date')
-plt.ylabel('total seats')
-plt.grid(True)
-plt.show()
-plt.savefig('testing.png')
+plt.ylabel('average revenue')
+plt.savefig('avg_rev.png')
 
 # #Create a metadata object
 # metadata = MetaData()

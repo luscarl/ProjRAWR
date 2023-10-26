@@ -1,7 +1,13 @@
 import pandas as pd
-from sqlalchemy import create_engine, text
-from sqlalchemy import MetaData
+from sqlalchemy import text
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
 import matplotlib.pyplot as plt
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus.flowables import PageBreak
 
 # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -79,16 +85,41 @@ plt.ylabel('average revenue')
 plt.savefig('avg_rev.png')
 plt.show()
 
+doc = SimpleDocTemplate("document.pdf", pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
+story = []
+
+styles = getSampleStyleSheet()
+title = "My PDF Document"
+story.append(Paragraph(title, styles["Title"]))
+story.append(Spacer(1, 12))
+
+text = "This is some text content that we're adding to our PDF document. You can customize formatting using styles."
+story.append(Paragraph(text, styles["Normal"]))
+# story.append(PageBreak())
+
+story.append(Paragraph("this is the avg poo origin idc"))
+image_path = "avg_pooorig.png"  # Replace with the path to your image file
+img = Image(image_path)
+story.append(img)
+
+story.append(Paragraph("this is the avg revenue of northamerica"))
+story.append(Image("avg_rev.png", width = 300, height = 200))
+story.append(Paragraph("this is the sum of passengers from of northamerica"))
+story.append(Image("sum_pax.png", width = 300, height = 200))
+
+doc.build(story)
+
 # #Create a metadata object
 # metadata = MetaData()
 
 # # Reflect the database schema to get table and column information
 # metadata.reflect(bind=engine)
-  
+
+
 # # Iterate through all tables and columns
 # for table_name, table in metadata.tables.items():
 #     if ('emission' in table_name or 'icao' in table_name or 'details' in table_name):
 #         continue
 #     for column in table.c:
-#         print(f"Table: {table_name}, Column: {column.name}")
-#         # print(f"Average: {avg_result}, Sum: {sum_result}")
+#         if ('cirium_traffic_northamerica' in table_name):
+#            print('0')

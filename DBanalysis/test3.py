@@ -97,14 +97,14 @@ text = "This is some text content that we're adding to our PDF document. You can
 story.append(Paragraph(text, styles["Normal"]))
 # story.append(PageBreak())
 
-story.append(Paragraph("this is the avg poo origin idc"))
+story.append(Paragraph("The Average Point of Origin"))
 image_path = "avg_pooorig.png"  # Replace with the path to your image file
 img = Image(image_path)
 story.append(img)
 
-story.append(Paragraph("this is the avg revenue of northamerica"))
+story.append(Paragraph("The Average Revenue of Flights from North America"))
 story.append(Image("avg_rev.png", width = 300, height = 200))
-story.append(Paragraph("this is the sum of passengers from of northamerica"))
+story.append(Paragraph("The Sum of Passengers from of North America"))
 story.append(Image("sum_pax.png", width = 300, height = 200))
 
 doc.build(story)

@@ -60,30 +60,50 @@ def qryGenerator(qry, interval, year, num):
     return 'SELECT ' + qry + "AND \"Year-Month-Day\" " + intv
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\"), AVG(\"% POO Orig\")as avg, AVG(\"Rev\") as rev FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df.plot(kind = 'line', x = 'month',y = 'sum', legend = False)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\")as pax, AVG(\"Yield\")as yield FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
 
+am_df.plot(kind = 'line', x = 'month',y = 'pax', c = '#294173', legend = False)
 plt.title('Monthly Total PAX')
 plt.xlabel('date')
 plt.ylabel('total pax')
-plt.grid(True)
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_pax.png')
-plt.show()
 
-plt.title('Monthly Average %POO Origin')
-am_df.plot(x = 'month', y= 'avg', legend = False)
-plt.title('Monthly Average %poo origin')
+am_df.plot(kind = 'line', x = 'month', y= 'yield', c = '#294173', legend = False)
+plt.title('Monthly Average Yields')
 plt.xlabel('date')
-plt.ylabel('average %poo origin')
-plt.savefig('avg_pooorig.png')
-plt.show()
+plt.ylabel('Average Yields')
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+plt.savefig('avg_yields.png')
 
-am_df.plot(x = 'month', y = 'rev', legend = False)
-plt.title('Monthly average revenue')
+
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as seats FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
+
+am_df.plot(kind = 'line', x = 'month', y= 'seats', c = '#294173', legend = False)
+plt.title('Monthly Total Seats')
+plt.xlabel('month-year')
+plt.ylabel('Total Seats')
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+plt.savefig('sum_seats.png')
+
+
+
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as qf FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('QF') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as va FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('VA') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+ax = am_df.plot(kind = 'line', x='month', y='qf', c= 'b', legend = False)
+am_df1.plot(ax=ax)
+plt.title('Monthly Total PAX by airlines')
 plt.xlabel('date')
-plt.ylabel('average revenue')
-plt.savefig('avg_rev.png')
-plt.show()
+plt.ylabel('total pax')
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+plt.savefig('sum_qf.png')
+am_df1.plot(kind = 'line', x='month', y='va',c= 'g', legend = False)
+plt.title('Monthly Total PAX by airlines')
+plt.xlabel('date')
+plt.ylabel('total pax')
+plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+plt.savefig('sum_va.png')
+
 
 doc = SimpleDocTemplate("document.pdf", pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
 story = []

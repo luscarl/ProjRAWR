@@ -60,7 +60,7 @@ def qryGenerator(qry, interval, year, num):
     return 'SELECT ' + qry + "AND \"Year-Month-Day\" " + intv
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\")as pax, AVG(\"Yield\")as yield FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\")as pax, AVG(\"Yield\")as yield FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
 
 am_df.plot(kind = 'line', x = 'month',y = 'pax', c = '#294173', legend = False)
 plt.title('Monthly Total PAX')
@@ -77,7 +77,7 @@ plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('avg_yields.png')
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as seats FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as seats FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
 
 am_df.plot(kind = 'line', x = 'month', y= 'seats', c = '#294173', legend = False)
 plt.title('Monthly Total Seats')
@@ -88,17 +88,18 @@ plt.savefig('sum_seats.png')
 
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as qf FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('QF') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as va FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('VA') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-ax = am_df.plot(kind = 'line', x='month', y='qf', c= 'b', legend = False)
-am_df1.plot(ax=ax)
-plt.title('Monthly Total PAX by airlines')
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as qf FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('QF') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as va FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('VA') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+# ax = am_df.plot(kind = 'line', x='month', y='qf', c= 'b', legend = False)
+# am_df1.plot(ax=ax)
+am_df.plot(kind = 'line', x='month', y='qf', c= 'b', legend = False)
+plt.title('Monthly Total PAX by airlines - QF')
 plt.xlabel('date')
 plt.ylabel('total pax')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_qf.png')
 am_df1.plot(kind = 'line', x='month', y='va',c= 'g', legend = False)
-plt.title('Monthly Total PAX by airlines')
+plt.title('Monthly Total PAX - VA')
 plt.xlabel('date')
 plt.ylabel('total pax')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
@@ -109,24 +110,39 @@ doc = SimpleDocTemplate("document.pdf", pagesize=letter, rightMargin=30, leftMar
 story = []
 
 styles = getSampleStyleSheet()
-title = "My PDF Document"
+title = "Automatic Report generator pdf - LAX-SYD route "
 story.append(Paragraph(title, styles["Title"]))
 story.append(Spacer(1, 12))
 
-text = "This is some text content that we're adding to our PDF document. You can customize formatting using styles."
+text = "Hi, this is an example report generated by my python script. In this example, I have taken route specific data from Cirium, specifically LAX-SYD Route. This script can also reproduce report even if database have changed/updated with new data. \n"
+text1 = "Since this is still under development, this is not the final look of this pdf. If there are any suggestions on graphs/layouts/new data, please tell me and I'll fix it. - Lucy, Coco, Avinash"
 story.append(Paragraph(text, styles["Normal"]))
-# story.append(PageBreak())
+story.append(Paragraph(text1, styles["Normal"]))
+story.append(Paragraph("\n", styles["Normal"]))
 
-story.append(Paragraph("this is the avg poo origin idc"))
+
+story.append(Paragraph("This is the monthly average % poo origin from LAX-SYD, which indicates the percentage of passengers with citizenship of the country of origin"))
 image_path = "avg_pooorig.png"  # Replace with the path to your image file
 img = Image(image_path)
 story.append(img)
+story.append(PageBreak())
 
-story.append(Paragraph("this is the avg revenue of northamerica"))
+story.append(Paragraph("This is the average monthly revenue from LAX-SYD "))
 story.append(Image("avg_rev.png", width = 300, height = 200))
-story.append(Paragraph("this is the sum of passengers from of northamerica"))
+story.append(Paragraph("This is the total monthly passenger from LAX-SYD"))
 story.append(Image("sum_pax.png", width = 300, height = 200))
 
+story.append(Paragraph("This is the total monthly seats from LAX-SYD"))
+story.append(Image("sum_seats.png", width = 300, height = 200))
+story.append(PageBreak())
+story.append(Paragraph("This is the average yield from LAX-SYD"))
+
+story.append(Image("avg_yields.png", width = 300, height = 200))
+story.append(Paragraph("This is just a demo pdf based on data from LAX-SYD only."))
+
+# story.append(Paragraph("This could also find the average total passengers by Airline, here are some examples"))
+# story.append(Image("sum_qf.png"), width = 300, height = 200)
+# story.append(Image("sum_va.png"), width = 300, height = 200)
 doc.build(story)
 
 # #Create a metadata object

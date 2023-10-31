@@ -3,10 +3,10 @@ from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 import matplotlib.pyplot as plt
 
-# Define your PostgreSQL database connection
+# # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
 
-# Create an SQLAlchemy engine
+# # Create an SQLAlchemy engine
 engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
@@ -98,7 +98,23 @@ plt.ylabel('total pax')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_va.png')
 
+qry = """SELECT
+    DATE_TRUNC('month', \"Year-Month-Day\") as month,
+    AVG(\"Yield\") as yield,
+    SUM(\"Total Pax\") as pax
+FROM cirium_traffic_northamerica
+WHERE
+    \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH', 'HNL')
+    AND \"Dest\" IN ('SYD', 'MEL', 'BNE')
+	AND \"Op Al\" = ('UA')
+	AND \"Stop-1 Airport\" is null
+	AND \"Total Pax\" >0
+    AND \"Year-Month-Day\">= '2022-01-01'
+group by
+  month"""
 
+df = pd.read_sql_query(text(qry), conn)
+print(df)
 # #Create a metadata object
 # metadata = MetaData()
 

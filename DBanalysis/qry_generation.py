@@ -70,7 +70,36 @@ locationDict = {"fromUs" : """WHERE "Orig" IN
 
 selectDict = {"pax" : "SUM(\"Total Pax\")"}
 
-def traLocGenerator(iata):
-    return 
+def traLocGenerator(iatas):
+    qrymid = ''
+    qryhead = "WHERE \"Orig\" IN ("
+    qryend = ')'
+    if len(iatas) == 1:
+        qrymid = iatas[0]
+    elif len(iatas)>1:
+        for code in iatas:
+            if code != iatas[-1]:
+                qrymid = qrymid + code + ','
+            if code == iatas[-1]:
+                qrymid = qrymid + code
+    return qryhead + " " + qrymid + " " + qryend
+        
 
 print(selectDict["pax"] + ' ' +locationDict["fromUs"])
+
+
+
+qry = """SELECT
+    DATE_TRUNC('month', \"Year-Month-Day\") as month,
+    AVG(\"Yield\") as yield,
+    SUM(\"Total Pax\") as pax
+FROM cirium_traffic_northamerica
+WHERE
+    \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH', 'HNL')
+    AND \"Dest\" IN ('SYD', 'MEL', 'BNE')
+	AND \"Op Al\" = ('UA')
+	AND \"Stop-1 Airport\" is null
+	AND \"Total Pax\" >0
+    AND \"Year-Month-Day\">= '2022-01-01'
+group by
+  month"""

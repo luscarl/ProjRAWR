@@ -9,10 +9,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus.flowables import PageBreak
 
-# Define your PostgreSQL database connection
+# # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
 
-# Create an SQLAlchemy engine
+# # Create an SQLAlchemy engine
 engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
@@ -65,6 +65,7 @@ plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_va.png')
 
 
+
 doc = SimpleDocTemplate("document.pdf", pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
 story = []
 
@@ -104,6 +105,8 @@ story.append(Paragraph("This is just a demo pdf based on data from LAX-SYD only.
 # story.append(Image("sum_va.png"), width = 300, height = 200)
 doc.build(story)
 
+# df = pd.read_sql_query(text(qry), conn)
+# print(df)
 # #Create a metadata object
 # metadata = MetaData()
 

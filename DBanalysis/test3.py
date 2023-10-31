@@ -16,48 +16,7 @@ db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zb
 engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
-class qrySwitch:
-  total_seats = " SUM(\"Seats\") "
-  total_pax = " SUM(\"Total pax\") "
-  total_rev = " SUM(\"Rev\") "
 
-class airports:
-  from_india = "FROM cirium_traffic_asia WHERE \"Orig\" IN ('IXA', 'AMD', 'ATQ', 'BLR', 'BBI', 'MAA', 'CJB', 'DED', 'DEL', 'JWR', 'GOI', 'GOX', 'GAY', 'GAU', 'HYD', 'IMF', 'IDR', 'JAI', 'CNN', 'COK', 'CCU', 'CCJ', 'LKO', 'IXM', 'IXE', 'BOM', 'NAG',  'PNQ', 'IXR', 'IXB', 'SXR', 'STV', 'TRV', 'TIR', 'TRZ', 'BDQ', 'VNS', 'VGA', 'VTZ')"
-
-def monthGenerator(year, num):
-    month = ''
-    month2 = ''
-    if (num > 12 & num < 1):
-            return 0
-    if (num >= 10 & num <= 12):
-            month = '-' + str(num) + "-01 00:00:00' "
-            month2 = '-' + str(num) + "-02 00:00:00'"
-    else:
-      month = '-0' + str(num) + "-01 00:00:00' "
-      month2 = '-0' + str(num) + "-02 00:00:00'"
-    return "BETWEEN " + "'" + str(year) + month + 'AND ' + str(year) + month2
-
-def biannualGenerator(year, num):
-    if (num >= 3 & num <= 0):
-      return 'error'
-    if (num == 1):
-      return "BETWEEN " + "'" + str(year) + "-01-01 00:00:00' " + 'AND ' + str(year) + "-06-02 00:00:00' "
-    else:
-      return "BETWEEN " + "'" + str(year) + "-07-01 00:00:00' " + 'AND ' + str(year) + "-12-02 00:00:00' "
-
-def qryGenerator(qry, interval, year, num):
-    intv = ''
-    qry = ''
-    if (interval == 'month'):
-      intv = monthGenerator(year, num)
-    elif (interval == 'biannual'):
-      intv = biannualGenerator(year, num)
-
-    if (qry == 'total_seats'):
-      qry = qrySwitch.total_seats
-    elif (qry == 'total_pax'):
-      qry = qrySwitch.to
-    return 'SELECT ' + qry + "AND \"Year-Month-Day\" " + intv
 
 
 am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\")as pax, AVG(\"Yield\")as yield FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)

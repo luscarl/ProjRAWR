@@ -1,4 +1,5 @@
 import psycopg2
+import sys
 
 conn = psycopg2.connect(
     host = "dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com",
@@ -28,5 +29,4 @@ def intervalGenerator(interval, year, num):
 def qryGenerator(interval, year, num):
     return "BETWEEN " + "''" + " AND " + "''"
 
-cursor.fetchall()
-
+print(cursor.fetchall())

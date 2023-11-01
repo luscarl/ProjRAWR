@@ -34,6 +34,7 @@ plt.xlabel('date')
 plt. ylabel('total pax')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_paxAL.png')
+plt.show()
 
 
 
@@ -60,6 +61,7 @@ plt.xlabel('date')
 plt. ylabel('average yield')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('avg_yieldAL.png')
+plt.show()
 
 
 am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as qf FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('QF') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)

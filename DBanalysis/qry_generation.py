@@ -185,6 +185,8 @@ def main():
     print(traffic_df)
     print("schedule")
     print(schedule_df)
+
+    
     return 0
 
 def formatfirst(continent, tORS):

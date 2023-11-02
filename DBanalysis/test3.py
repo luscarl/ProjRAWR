@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -62,6 +63,7 @@ plt.xlabel('date')
 plt.ylabel('total pax')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_pax.png')
+plt.show()
 
 am_df.plot(kind = 'line', x = 'month', y= 'yield', c = '#294173', legend = False)
 plt.title('Monthly Average Yields')
@@ -69,9 +71,10 @@ plt.xlabel('date')
 plt.ylabel('Average Yields')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('avg_yields.png')
+plt.show()
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as seats FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as seats FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Dest\" IN ('SYD', 'MEL', 'BNE') AND \"Stop-1 Airport\" is null GROUP BY \"Year-Month-Day\" LIMIT 30000;"), conn)
 
 am_df.plot(kind = 'line', x = 'month', y= 'seats', c = '#294173', legend = False)
 plt.title('Monthly Total Seats')
@@ -79,26 +82,12 @@ plt.xlabel('month-year')
 plt.ylabel('Total Seats')
 plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_seats.png')
+plt.ticklabel_format(style = 'Plain', axis = 'y')
+plt.show()
 
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as qf FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('QF') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\") as va FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('YVR','LAX','IAH','DFW','SFO','JFK','SCL') AND \"Stop-1 Airport\" is not null AND \"Op Al\" IN ('VA') AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-# ax = am_df.plot(kind = 'line', x='month', y='qf', c= 'b', legend = False)
-# am_df1.plot(ax=ax)
-plt.title('Monthly Total PAX by airlines')
-plt.xlabel('date')
-plt.ylabel('total pax')
-plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
-plt.savefig('sum_qf.png')
-am_df1.plot(kind = 'line', x='month', y='va',c= 'g', legend = False)
-plt.title('Monthly Total PAX by airlines')
-plt.xlabel('date')
-plt.ylabel('total pax')
-plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
-plt.savefig('sum_va.png')
-print(am_df)
-print(am_df1)
+
 
 qry = """SELECT
     DATE_TRUNC('month', \"Year-Month-Day\") as month,

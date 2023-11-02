@@ -3,6 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -64,10 +65,10 @@ plt.savefig('avg_yieldAL.png')
 plt.show()
 
 
-am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as qf FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('QF') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as aa FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('AA') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df2 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as ua FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('UA') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
-am_df3 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as dl FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('DL') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as qf FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Dest\" IN ('SYD', 'MEL', 'BNE') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('QF') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df1 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as aa FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Dest\" IN ('SYD', 'MEL', 'BNE') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('AA') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df2 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as ua FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Dest\" IN ('SYD', 'MEL', 'BNE') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('UA') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
+am_df3 = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Seats\") as dl FROM cirium_schedule_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX', 'SFO', 'DFW', 'IAH') AND \"Dest\" IN ('SYD', 'MEL', 'BNE') AND \"Stop-1 Airport\" is null AND \"Op Al\" IN ('DL') GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
 
 print(am_df)
 print(am_df1)
@@ -87,3 +88,5 @@ plt.xlabel('date')
 plt. ylabel('total seats')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_seatsAL.png')
+plt.ticklabel_format(style = 'Plain', axis = 'y')
+plt.show()

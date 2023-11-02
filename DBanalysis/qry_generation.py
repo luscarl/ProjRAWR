@@ -149,7 +149,6 @@ def main():
         orig = orig.upper()
         origin.append(orig)
     
-    
     if len(origin) == 0:
         print("need to have at least 1 origin")
         return 0
@@ -186,8 +185,12 @@ def main():
     print("schedule")
     print(schedule_df)
 
-    
+    trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
+    print("merge")
+    print(trsch_df)
     return 0
+
+
 
 def formatfirst(continent, tORS):
     options = ['northamerica', 'asia', 'europe', 'oceania']

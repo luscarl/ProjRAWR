@@ -77,3 +77,4 @@ def formatdest(orig, continent, dest):
     return finalstr
 
 if __name__ == "__main__":
+    generateTRSC()

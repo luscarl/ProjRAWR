@@ -80,17 +80,3 @@ group by
 
 df = pd.read_sql_query(text(qry), conn)
 print(df)
-# #Create a metadata object
-# metadata = MetaData()
-
-# # Reflect the database schema to get table and column information
-# metadata.reflect(bind=engine)
-
-
-# # Iterate through all tables and columns
-# for table_name, table in metadata.tables.items():
-#     if ('emission' in table_name or 'icao' in table_name or 'details' in table_name):
-#         continue
-#     for column in table.c:
-#         if ('cirium_traffic_northamerica' in table_name):
-#            print('0')

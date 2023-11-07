@@ -3,6 +3,7 @@ from sqlalchemy import text
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
 from qry_generation_trsch import *
 from qry_generation_al import *
+from pdf_generation import *
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -51,7 +52,7 @@ def getInfo():
 
     trsch_df = generateTRSC(origin, orig_continent, destination)
     topal_df = generateAl(origin, orig_continent, destination)
-
+    formatPDF(trsch_df, topal_df, origin, destination)
     # final = formatdest(origin, orig_continent, destination)
     # tqry = formatfirst(orig_continent, "traffic") + final
     # sqry = formatfirst(orig_continent, "schedule") + final

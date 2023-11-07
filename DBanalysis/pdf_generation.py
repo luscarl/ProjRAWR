@@ -9,12 +9,26 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus.flowables import PageBreak
 
+
+def formatPNGs(df):
+    totalPax(df)
+    avgYields(df)
+    totalSeats(df)
+    rev(df)
+    porig(df)
+    ask(df)
+
+def formatPDF(trdf, aldf, origin, dest):
+    formatPNGs(trdf)
+
+
+
 def totalPax(df):
     df.plot(kind = 'line', x = 'month',y = 'pax', c = '#294173', legend = False)
     plt.title('Monthly Total PAX')
     plt.xlabel('date')
     plt.ylabel('total pax')
-    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('sum_pax.png')
 
 def avgYields(df):
@@ -22,7 +36,7 @@ def avgYields(df):
     plt.title('Monthly Average Yields')
     plt.xlabel('date')
     plt.ylabel('Average Yields')
-    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_yields.png')
 
 def totalSeats(df):
@@ -30,7 +44,7 @@ def totalSeats(df):
     plt.title('Monthly Total Seats')
     plt.xlabel('month-year')
     plt.ylabel('Total Seats')
-    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('sum_seats.png')
 
 def rev(df):
@@ -38,7 +52,7 @@ def rev(df):
     plt.title('Monthly Average Revenue')
     plt.xlabel('month-year')
     plt.ylabel('Average Revenue')
-    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.grid(color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_rev.png')
     
 def porig(df):
@@ -46,9 +60,14 @@ def porig(df):
     plt.title('Average Passenger of Origin')
     plt.xlabel('month-year')
     plt.ylabel('% Passenger of Origin')
-    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_poo.png')
 
-
-
-
+def ask(df):
+    df.plot(kind = 'line', x = 'month', y= 'ask', c = '#294173', legend = False)
+    plt.title('Average ASK')
+    plt.xlabel('month-year')
+    plt.ylabel('ASK')
+    plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.ticklabel_format(style = 'plain', axis = 'y')
+    plt.savefig('avg_ask.png')

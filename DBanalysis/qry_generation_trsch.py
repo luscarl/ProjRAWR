@@ -1,7 +1,6 @@
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
-from qry_generation import *
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -12,7 +11,11 @@ conn = engine.connect()
 
 def generateTRSC(origin, orig_continent, destination):
     final = formatdest(origin, orig_continent, destination)
-
+    tqry = formatfirst(orig_continent, 'traffic') + final
+    sqry = formatfirst(orig_continent, 'schedule') + final
+    traffic_df = pd.read_sql_query(text(tqry), conn)
+    schedule_df = pd.read_sql_query(text(sqry), conn)
+    trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
 def formatAirports(aps):
     finalstrst = '('
     for source in aps:
@@ -75,6 +78,3 @@ def formatdest(orig, continent, dest):
     """
 
     return finalstr
-
-if __name__ == "__main__":
-    generateTRSC()

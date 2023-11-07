@@ -1,7 +1,8 @@
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
-from qry_generation_trsch import *
+from qry_generation_trsch import generateTRSC
+from qry_generation_al import generateAl
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -49,6 +50,7 @@ def getInfo():
         destination.append(dest)
 
     generateTRSC(origin, orig_continent, destination)
+    generateAl(origin, orig_continent, destination)
 
     # final = formatdest(origin, orig_continent, destination)
     # tqry = formatfirst(orig_continent, "traffic") + final
@@ -59,3 +61,7 @@ def getInfo():
     # trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
     # print(trsch_df)
     # return trsch_df
+
+
+if __name__ == "__main__":
+    getInfo()

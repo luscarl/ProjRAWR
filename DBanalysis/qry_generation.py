@@ -49,8 +49,8 @@ def getInfo():
         dest = dest.upper()
         destination.append(dest)
 
-    generateTRSC(origin, orig_continent, destination)
-    generateAl(origin, orig_continent, destination)
+    trsch_df = generateTRSC(origin, orig_continent, destination)
+    topal_df = generateAl(origin, orig_continent, destination)
 
     # final = formatdest(origin, orig_continent, destination)
     # tqry = formatfirst(orig_continent, "traffic") + final

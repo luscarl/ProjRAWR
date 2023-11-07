@@ -16,7 +16,8 @@ def generateTRSC(origin, orig_continent, destination):
     traffic_df = pd.read_sql_query(text(tqry), conn)
     schedule_df = pd.read_sql_query(text(sqry), conn)
     trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
-    print(trsch_df)
+    return trsch_df
+
 def formatAirports(aps):
     finalstrst = '('
     for source in aps:

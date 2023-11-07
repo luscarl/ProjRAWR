@@ -11,14 +11,16 @@ engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
 def generateAl(origin, orig_continent, destination):
-    final = ''
-    finalformat = formatTopAlst(orig_continent)
-    print(final)
+    final = formatTopAlst(orig_continent) + formatTopAlend(origin, destination)
+    topal_df = pd.read_sql_query(text(final), conn)
+    return topal_df
 
 def formatTopAlst(continent):
     firstStr = """
-    SELECT "Op Al" as airline, SUM("Total PAX") AS total_pax
+    SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax
     """ + "FROM cirium_traffic_"+continent
+
+    return firstStr
 
 def formatTopAlend(orig, dest):
     finalstr = """
@@ -29,6 +31,21 @@ def formatTopAlend(orig, dest):
     origstr = formatAirports(orig)
     deststr = formatAirports(dest)
     if len(dest) == 0 or dest[0]=='':
+        return """
+        WHERE "Orig" IN
+        """ + origstr + """
+        AND "Stop-1 Airport" is null
+        """ + finalstr
+    
+    final = """
+        WHERE "Orig" IN
+    """ + origstr + """
+    AND "Dest" IN
+    """ + deststr + """
+    AND "Stop-1 Airport" is null
+    """ + finalstr
+
+    return final
 
 
 

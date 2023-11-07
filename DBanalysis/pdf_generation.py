@@ -25,4 +25,30 @@ def avgYields(df):
     plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_yields.png')
 
+def totalSeats(df):
+    df.plot(kind = 'line', x = 'month', y= 'seats', c = '#294173', legend = False)
+    plt.title('Monthly Total Seats')
+    plt.xlabel('month-year')
+    plt.ylabel('Total Seats')
+    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('sum_seats.png')
+
+def rev(df):
+    df.plot(kind = 'line', x = 'month', y= 'rev', c = '#294173', legend = False)
+    plt.title('Monthly Average Revenue')
+    plt.xlabel('month-year')
+    plt.ylabel('Average Revenue')
+    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('avg_rev.png')
+    
+def porig(df):
+    df.plot(kind = 'line', x = 'month', y= 'porig', c = '#294173', legend = False)
+    plt.title('Average Passenger of Origin')
+    plt.xlabel('month-year')
+    plt.ylabel('% Passenger of Origin')
+    plt.grid(axis = 'y', color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('avg_poo.png')
+
+
+
 

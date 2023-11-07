@@ -12,11 +12,28 @@ conn = engine.connect()
 
 def generateAl(origin, orig_continent, destination):
     final = ''
-    finalformat = formatAirports(origin)
-    print(finalformat)
+    finalformat = formatTopAlst(orig_continent)
+    print(final)
 
-def format
+def formatTopAlst(continent):
+    firstStr = """
+    SELECT "Op Al" as airline, SUM("Total PAX") AS total_pax
+    """ + "FROM cirium_traffic_"+continent
 
+def formatTopAlend(orig, dest):
+    finalstr = """
+    Group by airline
+    Order by total_pax DESC
+    limit 4;
+    """
+    origstr = formatAirports(orig)
+    deststr = formatAirports(dest)
+    if len(dest) == 0 or dest[0]=='':
+
+
+
+    return finalstr
+    
 # SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax
 # FROM cirium_traffic_asia
 # Group by airline

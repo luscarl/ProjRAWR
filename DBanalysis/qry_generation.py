@@ -1,8 +1,8 @@
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
-from qry_generation_trsch import generateTRSC
-from qry_generation_al import generateAl
+from qry_generation_trsch import *
+from qry_generation_al import *
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'

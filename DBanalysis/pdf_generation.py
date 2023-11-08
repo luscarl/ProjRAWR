@@ -10,7 +10,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus.flowables import PageBreak
 
 
-def formatPNGs(df):
+def formatPNGdf(df):
     totalPax(df)
     avgYields(df)
     totalSeats(df)
@@ -19,7 +19,7 @@ def formatPNGs(df):
     ask(df)
 
 def formatPDF(trdf, aldf, origin, dest):
-    formatPNGs(trdf)
+    formatPNGdf(trdf)
 
 
 

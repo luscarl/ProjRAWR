@@ -13,6 +13,11 @@ conn = engine.connect()
 def generateAl(origin, orig_continent, destination):
     final = formatTopAlst(orig_continent) + formatTopAlend(origin, destination)
     topal_df = pd.read_sql_query(text(final), conn)
+    variables = topal_df['airline'].tolist()
+    firstal = variables[0]
+    secal = variables[1]
+    thirdal = variables[2]
+    fourthal = variables[3]
     return topal_df
 
 def formatTopAlst(continent):
@@ -46,9 +51,6 @@ def formatTopAlend(orig, dest):
     """ + finalstr
 
     return final
-
-
-
     return finalstr
     
 # SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax

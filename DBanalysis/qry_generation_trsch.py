@@ -10,12 +10,17 @@ engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
 def generateTRSC(origin, orig_continent, destination):
+    print(f"Producing data frame for route from {formatAirports(origin)} to {formatAirports(destination)}")
     final = formatdest(origin, orig_continent, destination)
     tqry = formatfirst(orig_continent, 'traffic') + final
     sqry = formatfirst(orig_continent, 'schedule') + final
+    print(f"Produced monthly traffic data from {formatAirports(origin)} to {formatAirports(destination)}")
     traffic_df = pd.read_sql_query(text(tqry), conn)
+    print(traffic_df)
     schedule_df = pd.read_sql_query(text(sqry), conn)
+    print(f"Produced monthly traffic data from {formatAirports(origin)} to {formatAirports(destination)}")
     trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
+    print(schedule_df)
     return trsch_df
 
 def formatAirports(aps):

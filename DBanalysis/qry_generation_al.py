@@ -11,31 +11,58 @@ engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
 def generateAl(origin, orig_continent, destination):
-    final = formatTopAlst(orig_continent) + formatTopAlend(origin, destination)
+    final = getairline1(orig_continent) + getairline2(origin, destination)
     topal_df = pd.read_sql_query(text(final), conn)
     variables = topal_df['airline'].tolist()
-    firstal = variables[0]
-    secal = variables[1]
-    thirdal = variables[2]
-    fourthal = variables[3]
+    
+    airline_df = pd.DataFrame()
+    for var in variables:
+        qry = getseats1(orig_continent) + getseats2(origin, destination)
+
     return topal_df
 
-def formatAlfirst(continent):
+def getseats1(continent):
     firstStr = """
     SELECT "Op Al" as airline, SUM("Seats") as seats
     """ + "FROM cirium_traffic_"+continent
 
     return firstStr
+
     
 
-def formatTopAlst(continent):
+def getairline1(continent):
     firstStr = """
     SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax
     """ + "FROM cirium_traffic_"+continent
 
     return firstStr
 
-def formatTopAlend(orig, dest):
+def getseats2(orig, dest, airline):
+    finalStr = """
+    Group by airline
+    """
+    origstr = formatAirports(orig)
+    finalstr = formatAirports(dest)
+    
+    if len(dest) == 0 or dest[0]=='':
+        return """
+        WHERE "Orig" IN
+        """ + origstr + """
+        AND "Stop-1 Airport" is null
+        """ + """AND "Op Al" = """ + airline +finalstr
+    
+    final = """
+        WHERE "Orig" IN
+    """ + origstr + """
+    AND "Dest" IN
+    """ + finalstr + """
+    AND "Stop-1 Airport" is null
+    """ + """AND "Op Al" = """ + airline +finalstr
+
+    return final
+ 
+
+def getairline2(orig, dest):
     finalstr = """
     Group by airline
     Order by total_pax DESC
@@ -59,7 +86,6 @@ def formatTopAlend(orig, dest):
     """ + finalstr
 
     return final
-    return finalstr
     
 # SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax
 # FROM cirium_traffic_asia

@@ -20,6 +20,14 @@ def generateAl(origin, orig_continent, destination):
     fourthal = variables[3]
     return topal_df
 
+def formatAlfirst(continent):
+    firstStr = """
+    SELECT "Op Al" as airline, SUM("Seats") as seats
+    """ + "FROM cirium_traffic_"+continent
+
+    return firstStr
+    
+
 def formatTopAlst(continent):
     firstStr = """
     SELECT "Op Al" as airline, SUM("Total Pax") AS total_pax

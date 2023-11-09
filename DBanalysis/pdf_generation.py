@@ -47,8 +47,16 @@ def alpax(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Total_Pax_AL.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]},"""
-    images_and_captionsal.append({'image_path': 'Total_Pax_AL.png', 'caption': 'Monthly total passengers from airlines with the most passenger'})
+
+    max_last = df.iloc[-1, 1:].idxmax()
+    min_last = df.iloc[-1, 1:].idxmin()
+    paragraphstr = f"""This graph indicates the total passengers per month grouped by airlines.
+                    As of {df.iloc[-1,0]},the airline with the most passenger per month in this route is {max_last}, and the 
+                    airline with the least passenger per month in this route is {min_last}"""
+    
+    images_and_captionsal.append({'image_path': 'Total_Pax_AL.png', 
+                                  'caption': 'Monthly total passengers from airlines with the most passenger',
+                                  'para':paragraphstr})
     plt.show()
 
 def alrev(df):
@@ -61,7 +69,14 @@ def alrev(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_Rev_AL.png')
-    images_and_captionsal.append({'image_path': 'Avg_Rev_AL.png', 'caption': 'Monthly average revenue from airlines with the most passenger'})
+    max_last = df.iloc[-1, 1:].idxmax()
+    min_last = df.iloc[-1, 1:].idxmin()
+    paragraphstr = f"""This graph indicates the average revenue per month grouped by airlines.
+                    As of {df.iloc[-1,0]},the airline with the highest average revenue per month in this route is {max_last}, and the 
+                    airline with the lowest average revenue per month in this route is {min_last}"""
+    images_and_captionsal.append({'image_path': 'Avg_Rev_AL.png',
+                                   'caption': 'Monthly average revenue from airlines with the most passenger',
+                                   'para':paragraphstr})
     plt.show()
 
 def alyield(df):
@@ -74,7 +89,16 @@ def alyield(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_yield_AL.png')
-    images_and_captionsal.append({'image_path': 'Avg_yield_AL.png', 'caption': 'Monthly average yield from airlines with the most passenger'})
+
+    max_last = df.iloc[-1, 1:].idxmax()
+    min_last = df.iloc[-1, 1:].idxmin()
+    paragraphstr = f"""This graph indicates the average yield per month grouped by airlines.
+                    As of {df.iloc[-1,0]},the airline with the average yield per month in this route is {max_last}, and the 
+                    airline with the lowest average yield per month in this route is {min_last}"""
+    
+    images_and_captionsal.append({'image_path': 'Avg_yield_AL.png',
+                                   'caption': 'Monthly average yield from airlines with the most passenger',
+                                   'para':paragraphstr})
     plt.show()
 
 def totalPax(df):
@@ -361,7 +385,7 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)
         p = item.get('para')
-        print(item.keys())
+        
         pgraph = Paragraph(p, styles['Normal'])
         
         data = [[image], [caption]]
@@ -375,24 +399,29 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
         tempstry.append(table)
         tempstry.append(Spacer(1,0.2*inch))
         story.append(KeepTogether(tempstry))
+
+    alintro = alstr_generation(origin, dest, aldf)
+    story.append(Paragraph(alintro))
+
     for item in images_and_captionsal:
+        tstry = []
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)
-        
+        p = item.get('para')
+        pgraph = Paragraph(p, styles['Normal'])
+
         data = [[image], [caption]]
         table = Table(data)
         
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER')
         ]))
-        para = Paragraph(f"This is a paragraph before the table", styles['Normal'])
-        story.append(para)
-        story.append(table)
-        story.append(Spacer(1, 0.2*inch))  
-
+        tstry.append(pgraph)
+        tstry.append(table)
+        tstry.append(Spacer(1,0.2*inch))
+        story.append(KeepTogether(tstry))
+        
     doc.build(story)
 
 def title_generation(origin, dest):
@@ -444,5 +473,7 @@ def alstr_generation(origin, dest, aldf):
     for a in al:
         alstr = alstr + f"{a} "
 
-    gstr = f""" The top 4 airlines with the most passengers travelling 
-                from {originstr} to {deststr} are {alstr}. The analysis of airline is of below."""
+    gstr = f""" The second part of this report analyses the top 4 airlines with the most passengers travelling 
+                from {originstr} to {deststr} are {alstr}, which includes total passengers, average yield and average revenue."""
+
+    return gstr

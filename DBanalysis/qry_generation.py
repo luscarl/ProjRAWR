@@ -54,7 +54,7 @@ def getInfo():
     trsch_df = generateTRSC(origin, orig_continent, destination)
     al_df = generateAl(origin, orig_continent, destination)
     topr_df = generateR(origin, orig_continent, destination)
-    formatPDF(trsch_df, al_df, origin, destination)
+    formatPDF(trsch_df, al_df, topr_df,origin, destination)
 
 
 if __name__ == "__main__":

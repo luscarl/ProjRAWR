@@ -18,11 +18,55 @@ def formatPNGdf(df):
     porig(df)
     ask(df)
 
-def formatPDF(trdf, aldf, origin, dest):
+def formatPNGal(df):
+    (topal, talpax, taly, talrev) = df
+    alpax(talpax)
+    alyield(taly)
+    alrev(talrev)
+
+
+def formatPDF(trdf, aldf, rdf, origin, dest):
     formatPNGdf(trdf)
+    formatPNGal(aldf)
 
+def alpax(df):
+    print(df)
+    x = df['month']
+    y_columns = df.columns[1:5].to_list()
+    for column in y_columns:
+        plt.plot(x, df[column], label = column)
+    plt.legend()
+    plt.title('Monthly Total Pax by airlines')
+    plt.xlabel('date')
+    plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('Total_Pax_AL.png')
+    plt.show()
 
+def alrev(df):
+    print(df)
+    x = df['month']
+    y_columns = df.columns[1:5].to_list()
+    for column in y_columns:
+        plt.plot(x, df[column], label = column)
+    plt.legend()
+    plt.title('Monthly average revenue by airlines')
+    plt.xlabel('date')
+    plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('Avg_Rev_AL.png')
+    plt.show()
 
+def alyield(df):
+    print(df)
+    x = df['month']
+    y_columns = df.columns[1:5].to_list()
+    for column in y_columns:
+        plt.plot(x, df[column], label = column)
+    plt.legend()
+    plt.title('Monthly average yield by airlines')
+    plt.xlabel('date')
+    plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
+    plt.savefig('Avg_yield_AL.png')
+    plt.show()
 
 def totalPax(df):
     df.plot(kind = 'line', x = 'month',y = 'pax', c = '#294173', legend = False)
@@ -48,6 +92,7 @@ def totalSeats(df):
     plt.xlabel('month-year')
     plt.ylabel('Total Seats')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
+    plt.ticklabel_format(style = 'plain', axis = 'y')
     plt.savefig('sum_seats.png')
     plt.show()
 

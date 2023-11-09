@@ -9,6 +9,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.tables import Table, TableStyle
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
+from statsmodels.tsa.arima.model import ARIMA
 
 images_and_captions = []
 
@@ -77,9 +78,19 @@ def alyield(df):
 
 def totalPax(df):
     df['Trend'] = df['pax'].rolling(window = 4).mean()
-    plt.plot(df['month'], df['pax'], label = 'Monthly total sum', color='#294173')
+    plt.plot(df['month'], df['pax'], label = 'Monthly total pax', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
-    plt.title('Monthly Total PAX with trend')
+    
+    model = ARIMA(df['pax'], order=(5,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df['month'].iloc[-1]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+    print(forecast)
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
+    plt.title('Monthly Total PAX with trend and forecast')
     plt.legend()
     plt.xlabel('date')
     plt.ylabel('total pax')
@@ -110,8 +121,22 @@ def totalSeats(df):
     plt.show()
 
 def rev(df):
-    df.plot(kind = 'line', x = 'month', y= 'rev', c = '#294173', legend = False)
+    df['Trend'] = df['rev'].rolling(window = 4).mean()
+    plt.plot(df['month'], df['rev'], label = 'Monthly average revenue', color='#294173')
+    plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
+    
+    model = ARIMA(df['rev'], order=(5,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df['month'].iloc[-1]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+    print(forecast)
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
+    # df.plot(kind = 'line', x = 'month', y= 'rev', c = '#294173', legend = False)
     plt.title('Monthly Average Revenue')
+    plt.legend()
     plt.xlabel('month-year')
     plt.ylabel('Average Revenue')
     plt.grid(color = 'grey', linestyle = '--', linewidth = 0.5)
@@ -130,8 +155,22 @@ def porig(df):
     plt.show()
 
 def ask(df):
-    df.plot(kind = 'line', x = 'month', y= 'ask', c = '#294173', legend = False)
+    df['Trend'] = df['ask'].rolling(window = 4).mean()
+    plt.plot(df['month'], df['ask'], label = 'Monthly average ask', color='#294173')
+    plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
+    
+    model = ARIMA(df['ask'], order=(5,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df['month'].iloc[-1]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+    print(forecast)
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
+    # df.plot(kind = 'line', x = 'month', y= 'ask', c = '#294173', legend = False)
     plt.title('Average ASK')
+    plt.legend()
     plt.xlabel('month-year')
     plt.ylabel('ASK')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
@@ -146,7 +185,7 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     title_style = styles['Title']
 
     # Create a title paragraph
-    title = Paragraph("", title_style)
+    title = Paragraph(title_generation(origin, dest), title_style)
     story.append(title)
 
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
@@ -177,4 +216,34 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     doc.build(story)
 
 def title_generation(origin, dest):
-    return "Report of title"
+    if len(dest) == 0:
+        return f"Report of flights from {origin}"
+
+    return f"Report: Data for flights from {origin} to {dest}"
+
+def intro_generation(origin, dest):
+    originstr = ''
+    deststr = ''
+    for orig in origin:
+        originstr.append(f"{orig} ")
+    for d in dest:
+        deststr.append(f"{d} ")
+
+    if len(dest) == 0:
+        return f"""This report focuses on key performance metrics and
+        trends that have significantly impacted the aviation sector,
+          focusing on flights from {originstr}. 
+        The report includes a variety of data,
+          including the total number of passengers, average revenue,
+            yield, and passenger of origin. 
+            """
+
+    str = f"""This report focuses on key performance metrics and
+        trends that have significantly impacted the aviation sector,
+          focusing on flights from {originstr} to {deststr}. 
+        The report includes a variety of data,
+          including the total number of passengers, average revenue,
+            yield, and passenger of origin. 
+            """
+    return str
+    

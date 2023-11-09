@@ -11,28 +11,37 @@ engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
 def generateAl(origin, orig_continent, destination):
-    
     final = getairline1(orig_continent) + getairline2(origin, destination)
     topal_df = pd.read_sql_query(text(final), conn)
-    
+    print(f"Producing top airlines in terms of {formatAirports(origin)} to {formatAirports(destination)}")
     variables = topal_df['airline'].tolist()
-    airline_df = pd.DataFrame()
+    print(topal_df)
     for vara in variables:
-        qry = getseats1(orig_continent) + getseats2(origin, destination,vara)
-        temp_df = pd.read_sql_query(text(qry), conn)
-        airline_df = pd.concat([airline_df, temp_df])
-
-    al_df = topal_df.merge(airline_df, on = 'airline', how = 'inner')
-    print(al_df)
+        print(destination)
+        print(generateAlMonth(vara, orig_continent, origin, destination))
     return topal_df
 
-def getseats1(continent):
-    firstStr = """
-    SELECT "Op Al" as airline, SUM("Seats") as seats
-    """ + "FROM cirium_schedule_"+continent
-    return firstStr
+def generateAlMonth(airline, continent, orig, dest):
 
+    if len(dest) == 0 or dest[0] == '':
+        return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                sum("Total Pax") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Op Al" IN ('{airline}')
+                group by "Year-Month-Day"
+                """
     
+    return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                sum("Total Pax") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Dest" IN {formatAirports(dest)}
+                AND "Op Al" IN ('{airline}')
+                group by "Year-Month-Day"
+                """
 
 def getairline1(continent):
     firstStr = """
@@ -40,27 +49,6 @@ def getairline1(continent):
     """ + "FROM cirium_traffic_"+continent
 
     return firstStr
-
-def getseats2(orig, dest, airline):
-    origstr = formatAirports(orig)
-    finalstr = formatAirports(dest)
-    
-    if len(dest) == 0 or dest[0]=='':
-        return """
-        WHERE "Orig" IN
-        """ + origstr + """
-        AND "Stop-1 Airport" is null
-        """ + """AND "Op Al" IN ('""" + airline + "') Group by airline"
-    
-    final = """
-        WHERE "Orig" IN
-    """ + origstr + """
-    AND "Dest" IN
-    """ + finalstr + """
-    AND "Stop-1 Airport" is null
-    """ + """AND "Op Al" IN ('""" + airline + "') Group by airline"
-
-    return final
  
 
 def getairline2(orig, dest):

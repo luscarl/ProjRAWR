@@ -16,9 +16,6 @@ db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zb
 engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
-
-
-
 am_df = pd.read_sql_query(text("SELECT DISTINCT ON (DATE_TRUNC('month', \"Year-Month-Day\")) DATE_TRUNC('month', \"Year-Month-Day\") AS month, SUM(\"Total Pax\")as pax, AVG(\"Yield\")as yield FROM cirium_traffic_northamerica WHERE \"Year-Month-Day\">= '2022-01-01' AND \"Orig\" IN ('LAX') AND \"Stop-1 Airport\" is not null AND \"Total Pax\" >0 GROUP BY \"Year-Month-Day\" LIMIT 10000;"), conn)
 
 am_df.plot(kind = 'line', x = 'month',y = 'pax', c = '#294173', legend = False)

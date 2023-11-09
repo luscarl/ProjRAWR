@@ -99,10 +99,19 @@ def totalPax(df):
     plt.savefig('sum_pax.png')
     max = df.loc[df['pax'].idxmax()]
     min = df.loc[df['pax'].idxmin()]
-    paragraphstr = f"""This shows the total passengers traveled per month in this route. The highest number of passenger 
-                        per month is {max['pax']}, which happened in {max['month'].to_period(freq = 'M')}.
+    paragraphstr = f"""This graph shows the total passengers traveled per month in this route. The highest number of passenger 
+                        per month is {max['pax']}, which happened in {max['month'].to_period(freq = 'M')}. 
                         The lowest number of passenger per month is {min['pax']}, which happened in {min['month'].to_period(freq = 'M')}
                           As of {df.iloc[-1,0]}, the total monthly passenger is {df.iloc[-1,2]}. \n"""
+    
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+    
+    if (lastrow['Trend'] >= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in total passengers. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in total passengers. Please note this is just a prediction, it may not be 100% accurate. "
+
     images_and_captions.append({'image_path': 'sum_pax.png',
                                 'caption': 'Monthly total passengers from desired route',
                                 'para':paragraphstr})
@@ -132,9 +141,17 @@ def avgYields(df):
     max = df.loc[df['yield'].idxmax()]
     min = df.loc[df['yield'].idxmin()]
     paragraphstr = f"""This graph shows the average yield traveled per month in this route. The highest average yielded
-                        per month is {max['yield']} %, which happened in {max['month'].to_period(freq = 'M')}.
-                        The lowest average revenue per month is {min['yield']} %, which happened in {min['month'].to_period(freq = 'M')}
+                        per month is {max['yield']*100} %, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest average revenue per month is {min['yield']*100} %, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+
+    if (lastrow['Trend']>= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in average yields. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr =  paragraphstr + "There is a general downward trend according to the trend present in average yields. Please note this is just a prediction, it may not be 100% accurate. "
+    
     images_and_captions.append({'image_path': 'avg_yields.png', 
                                 'caption': 'Monthly average yield from desired route',
                                 'para': paragraphstr})
@@ -168,6 +185,14 @@ def totalSeats(df):
                         per month is {max['seats']}, which happened in {max['month'].to_period(freq = 'M')}.
                         The lowest number of seats per month is {min['seats']}, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the total monthly seats is {df.iloc[-1,5]}. \n"""
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+
+    if (lastrow['Trend']>= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in total seats. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in total seats. Please note this is just a prediction, it may not be 100% accurate. "
+    
     images_and_captions.append({'image_path': 'sum_seats.png', 
                                 'caption': 'Monthly sum of seats from desired route',
                                 'para':paragraphstr})
@@ -199,6 +224,14 @@ def rev(df):
                         is {max['rev']}, which happened in {max['month'].to_period(freq = 'M')}.
                         The lowest revenue averaged per month is {min['rev']}, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the average monthly revenue is {df.iloc[-1,4]}. \n"""
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+
+    if (lastrow['Trend']>= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in average revenue. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in average revenue. Please note this is just a prediction, it may not be 100% accurate. "
+    
     images_and_captions.append({'image_path': 'avg_rev.png',
                                  'caption': 'Monthly average revenue from desired route',
                                  'para':paragraphstr})
@@ -233,6 +266,14 @@ def porig(df):
                         per month is {max['porig']}, which happened in {max['month'].to_period(freq = 'M')}.
                         The lowest percentage of passenger of origin per month is {min['porig']}, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the average monthly passenger of origin in percentage is {df.iloc[-1,3]}. \n"""
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+
+    if (lastrow['Trend']>= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in average passengers from country of origin. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in total passengers from country of origin. Please note this is just a prediction, it may not be 100% accurate. "
+    
     images_and_captions.append({'image_path': 'avg_poo.png', 
                                 'caption': 'Monthly average passenger of origin from desired route',
                                 'para': paragraphstr})
@@ -260,14 +301,29 @@ def ask(df):
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.ticklabel_format(style = 'plain', axis = 'y')
     plt.savefig('avg_ask.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly ASK is {df.iloc[-1,6]}. \n"""
-    images_and_captions.append({'image_path': 'avg_ask.png',
-                                'caption': 'Monthly average yield from desired route',
-                                'para': paragraphstr})
+    max = df.loc[df['ask'].idxmax()]
+    min = df.loc[df['ask'].idxmin()]
+    paragraphstr = f"""This graph shows the average available seat kilometers per month in this route. The highest available seat kilometers 
+                        per month is {max['ask']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest available seat kilometers per month is {min['ask']}, which happened in {min['month'].to_period(freq = 'M')}
+                          As of {df.iloc[-1,0]}, the average monthly available seat kilometers is {df.iloc[-1,5]}. \n"""
+    
+    lastrow = df.iloc[-1]
+    seclastrow = df.iloc[-2]
+
+    if (lastrow['Trend']>= seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general upward trend according to the trend present in available seat kilometers. "
+    elif (lastrow['Trend'] < seclastrow['Trend']):
+        paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in available seat kilometers. Please note this is just a prediction, it may not be 100% accurate. "
+
+    images_and_captions.append({'image_path': 'sum_pax.png',
+                                'caption': 'Monthly total passengers from desired route',
+                                'para':paragraphstr})
     plt.show()
 
 def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_captions):
     story = []
+    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
     styles = getSampleStyleSheet()
     title_style = styles['Title']
 
@@ -276,14 +332,26 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
 
     intro = Paragraph(intro_generation(origin, dest))
     story.append(intro)
-    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
 
+    story.append(Spacer(1,0.2*inch))
     secpstr = """
             The first part of this report displays the total number of passenger passenger, 
             average yield, total seats available, average revenue, average monthly passenger of origin, and 
-            average available seats kilometer. Each graph will include a time series trend, which indicates
+            average available seat kilometers. Each graph will include a time series trend modeled by ARIMA,
+            which is an indicator of future growth for that particular dataset. It will also include a 12 month
+            forecast based on previous data.
             """
+    sec = Paragraph(secpstr)
+    story.append(sec)
 
+    story.append(Spacer(1,0.2*inch))
+    thirdpstr = """
+            Please note that the trend and predictions in this graph is purely based on previous data,
+            and may be inaccurate in the real world. Additionally, the accuracy of forecast will decrease
+            with time, hence it is only suggested to use the first 3-4 month of the forecast.
+    """
+    third = Paragraph(thirdpstr)
+    story.append(third)
 
     styles = getSampleStyleSheet()
     centered_style = ParagraphStyle(name='CenteredStyle', parent=styles['Normal'], alignment=TA_CENTER)

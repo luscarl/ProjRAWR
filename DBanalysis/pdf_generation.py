@@ -1,7 +1,7 @@
 import pandas as pd
-from sqlalchemy import text
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
+
 import matplotlib.pyplot as plt
+
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -9,9 +9,11 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.tables import Table, TableStyle
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
+
 from statsmodels.tsa.arima.model import ARIMA
 
 images_and_captions = []
+images_and_captionsal = []
 
 def formatPNGdf(df):
     totalPax(df)
@@ -35,7 +37,6 @@ def formatPDF(trdf, aldf, rdf, origin, dest):
     add_images_and_captions(rdf, topal, origin, dest, 'output.pdf', images_and_captions)
 
 def alpax(df):
-    print(df)
     x = df['month']
     y_columns = df.columns[1:5].to_list()
     for column in y_columns:
@@ -45,11 +46,10 @@ def alpax(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Total_Pax_AL.png')
-    images_and_captions.append({'image_path': 'Total_Pax_AL.png', 'caption': 'Monthly total passengers from airlines with the most passenger'})
+    images_and_captionsal.append({'image_path': 'Total_Pax_AL.png', 'caption': 'Monthly total passengers from airlines with the most passenger'})
     plt.show()
 
 def alrev(df):
-    print(df)
     x = df['month']
     y_columns = df.columns[1:5].to_list()
     for column in y_columns:
@@ -59,11 +59,10 @@ def alrev(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_Rev_AL.png')
-    images_and_captions.append({'image_path': 'Avg_Rev_AL.png', 'caption': 'Monthly average revenue from airlines with the most passenger'})
+    images_and_captionsal.append({'image_path': 'Avg_Rev_AL.png', 'caption': 'Monthly average revenue from airlines with the most passenger'})
     plt.show()
 
 def alyield(df):
-    print(df)
     x = df['month']
     y_columns = df.columns[1:5].to_list()
     for column in y_columns:
@@ -73,7 +72,7 @@ def alyield(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_yield_AL.png')
-    images_and_captions.append({'image_path': 'Avg_yield_AL.png', 'caption': 'Monthly average yield from airlines with the most passenger'})
+    images_and_captionsal.append({'image_path': 'Avg_yield_AL.png', 'caption': 'Monthly average yield from airlines with the most passenger'})
     plt.show()
 
 def totalPax(df):
@@ -125,7 +124,7 @@ def rev(df):
     plt.plot(df['month'], df['rev'], label = 'Monthly average revenue', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
     
-    model = ARIMA(df['rev'], order=(5,1,0))
+    model = ARIMA(df['rev'], order=(12,6,0))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps = 12)
 
@@ -159,7 +158,7 @@ def ask(df):
     plt.plot(df['month'], df['ask'], label = 'Monthly average ask', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
     
-    model = ARIMA(df['ask'], order=(5,1,0))
+    model = ARIMA(df['ask'], order=(12,6,0))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps = 12)
 
@@ -188,6 +187,8 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     title = Paragraph(title_generation(origin, dest), title_style)
     story.append(title)
 
+    intro = Paragraph(intro_generation(origin, dest))
+    story.append(intro)
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
     
 
@@ -201,7 +202,6 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
         data = [[image], [caption]]
         table = Table(data)
         
-        # Apply table style
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.white),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -211,39 +211,58 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
         para = Paragraph(f"This is a paragraph before the table", styles['Normal'])
         story.append(para)
         story.append(table)
-        story.append(Spacer(1, 0.2*inch))  # Add space between images
+        story.append(Spacer(1, 0.2*inch))  
 
     doc.build(story)
 
 def title_generation(origin, dest):
-    if len(dest) == 0:
-        return f"Report of flights from {origin}"
+    originstr = ''
+    deststr = ''
+    for orig in origin:
+        originstr = originstr + f"{orig} "
+    for d in dest:
+        deststr = deststr + f"{d} "
 
-    return f"Report: Data for flights from {origin} to {dest}"
+    if len(dest) == 0:
+        return f"Report of flights from {originstr}"
+
+    return f"Report: Data for flights from {originstr} to {deststr}"
 
 def intro_generation(origin, dest):
     originstr = ''
     deststr = ''
     for orig in origin:
-        originstr.append(f"{orig} ")
+        originstr = originstr + f"{orig} "
     for d in dest:
-        deststr.append(f"{d} ")
+        deststr = deststr + f"{d} "
 
     if len(dest) == 0:
         return f"""This report focuses on key performance metrics and
-        trends that have significantly impacted the aviation sector,
-          focusing on flights from {originstr}. 
+        trends on data which have potential impacts on flights from {originstr}. 
         The report includes a variety of data,
           including the total number of passengers, average revenue,
-            yield, and passenger of origin. 
+            yield, and passenger of origin. \n \n
             """
 
     str = f"""This report focuses on key performance metrics and
-        trends that have significantly impacted the aviation sector,
-          focusing on flights from {originstr} to {deststr}. 
+        trends on data which have potential impacts on flights from {originstr} to {deststr}. 
         The report includes a variety of data,
           including the total number of passengers, average revenue,
-            yield, and passenger of origin. 
+            yield, and passenger of origin. \n \n
             """
     return str
     
+def alstr_generation(origin, dest, aldf):
+    originstr = ''
+    deststr = ''
+    alstr = ''
+    for orig in origin:
+        originstr = originstr + f"{orig} "
+    for d in dest:
+        deststr = deststr + f"{d} "
+    al = aldf['airline'].to_list()
+    for a in al:
+        alstr = alstr + f"{a} "
+
+    gstr = f""" The top 4 airlines with the most passengers travelling 
+                from {originstr} to {deststr} are {alstr}. The analysis of airline is of below."""

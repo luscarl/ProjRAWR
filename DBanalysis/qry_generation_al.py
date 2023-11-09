@@ -1,6 +1,5 @@
 import pandas as pd
-from sqlalchemy import text
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
+from sqlalchemy import create_engine, text
 from qry_generation_trsch import formatAirports
 
 # PostgreSQL database connection

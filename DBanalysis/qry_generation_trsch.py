@@ -46,14 +46,14 @@ def formatfirst(continent, tORS):
 
     if tORS == 'traffic':
         qrystart = """
-        SELECT DATE_TRUNC('month', \"Year-Month-Day\") as month,
+        SELECT "Year-Month-Day" as month,
         AVG("Yield") as yield, SUM("Total Pax") as pax, 
         AVG("% POO Orig") as porig, AVG("Rev") as rev 
         """ + "FROM cirium_traffic_" + continent 
     
     if tORS == 'schedule':
         qrystart = """
-        SELECT DATE_TRUNC('month', \"Year-Month-Day\") as month,
+        SELECT "Year-Month-Day" as month,
         SUM("Seats") as seats, AVG("ASKs") as ask 
         """ + "FROM cirium_schedule_" +continent 
     

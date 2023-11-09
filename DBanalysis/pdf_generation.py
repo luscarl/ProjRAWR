@@ -29,6 +29,7 @@ def formatPNGal(df):
 
 
 def formatPDF(trdf, aldf, rdf, origin, dest):
+    print(trdf)
     (topal, talpax, taly, talrev) = aldf
     formatPNGdf(trdf)
     formatPNGal(aldf)
@@ -79,11 +80,11 @@ def totalPax(df):
     plt.plot(df['month'], df['pax'], label = 'Monthly total pax', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
     
-    model = ARIMA(df['pax'], order=(5,1,0))
+    model = ARIMA(df['pax'], order=(4,1,0))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps = 12)
 
-    last_date = df['month'].iloc[-1]
+    last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
     print(forecast)
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
@@ -96,7 +97,9 @@ def totalPax(df):
     plt.ylabel('total pax')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('sum_pax.png')
-    images_and_captions.append({'image_path': 'sum_pax.png', 'caption': 'Monthly total passengers from desired route'})
+    images_and_captions.append({'image_path': 'sum_pax.png',
+                                'caption': 'Monthly total passengers from desired route',
+                                'para':paragraphstr})
     plt.show()
 
 def avgYields(df):
@@ -106,7 +109,11 @@ def avgYields(df):
     plt.ylabel('Average Yields')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_yields.png')
-    images_and_captions.append({'image_path': 'avg_yields.png', 'caption': 'Monthly average yield from desired route'})
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
+    images_and_captions.append({'image_path': 'avg_yields.png', 
+                                'caption': 'Monthly average yield from desired route',
+                                'para': paragraphstr})
+    
     plt.show()
 
 def totalSeats(df):
@@ -117,7 +124,10 @@ def totalSeats(df):
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.ticklabel_format(style = 'plain', axis = 'y')
     plt.savefig('sum_seats.png')
-    images_and_captions.append({'image_path': 'sum_seats.png', 'caption': 'Monthly sum of seats from desired route'})
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the total monthly seats is {df.iloc[-1,5]}. \n"""
+    images_and_captions.append({'image_path': 'sum_seats.png', 
+                                'caption': 'Monthly sum of seats from desired route',
+                                'para':paragraphstr})
     plt.show()
 
 def rev(df):
@@ -125,11 +135,11 @@ def rev(df):
     plt.plot(df['month'], df['rev'], label = 'Monthly average revenue', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
     
-    model = ARIMA(df['rev'], order=(12,6,0))
+    model = ARIMA(df['rev'], order=(4,1,0))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps = 12)
 
-    last_date = df['month'].iloc[-1]
+    last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
     print(forecast)
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
@@ -141,7 +151,10 @@ def rev(df):
     plt.ylabel('Average Revenue')
     plt.grid(color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_rev.png')
-    images_and_captions.append({'image_path': 'avg_rev.png', 'caption': 'Monthly average revenue from desired route'})
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly revenue is {df.iloc[-1,4]}. \n"""
+    images_and_captions.append({'image_path': 'avg_rev.png',
+                                 'caption': 'Monthly average revenue from desired route',
+                                 'para':paragraphstr})
     plt.show()
     
 def porig(df):
@@ -151,7 +164,10 @@ def porig(df):
     plt.ylabel('% Passenger of Origin')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_poo.png')
-    images_and_captions.append({'image_path': 'avg_poo.png', 'caption': 'Monthly average passenger of origin from desired route'})
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly passenger of origin in percentage is {df.iloc[-1,3]}. \n"""
+    images_and_captions.append({'image_path': 'avg_poo.png', 
+                                'caption': 'Monthly average passenger of origin from desired route',
+                                'para': paragraphstr})
     plt.show()
 
 def ask(df):
@@ -159,11 +175,11 @@ def ask(df):
     plt.plot(df['month'], df['ask'], label = 'Monthly average ask', color='#294173')
     plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
     
-    model = ARIMA(df['ask'], order=(12,6,0))
+    model = ARIMA(df['ask'], order=(4,1,0))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps = 12)
 
-    last_date = df['month'].iloc[-1]
+    last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
     print(forecast)
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
@@ -176,7 +192,10 @@ def ask(df):
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.ticklabel_format(style = 'plain', axis = 'y')
     plt.savefig('avg_ask.png')
-    images_and_captions.append({'image_path': 'avg_ask.png', 'caption': 'Monthly average yield from desired route'})
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly ASK is {df.iloc[-1,6]}. \n"""
+    images_and_captions.append({'image_path': 'avg_ask.png',
+                                'caption': 'Monthly average yield from desired route',
+                                'para': paragraphstr})
     plt.show()
 
 def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_captions):
@@ -184,7 +203,6 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     styles = getSampleStyleSheet()
     title_style = styles['Title']
 
-    # Create a title paragraph
     title = Paragraph(title_generation(origin, dest), title_style)
     story.append(title)
 
@@ -199,18 +217,19 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     for item in images_and_captions:
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)
-        
+        p = item.get('para')
+        print(item.keys())
+        pgraph = Paragraph(p, styles['Normal'])
+        story.append(pgraph)
         data = [[image], [caption]]
         table = Table(data)
         
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER')
         ]))
-        para = Paragraph(f"This is a paragraph before the table", styles['Normal'])
-        story.append(para)
+        
+        
         story.append(table)
         story.append(Spacer(1, 0.2*inch))  
 

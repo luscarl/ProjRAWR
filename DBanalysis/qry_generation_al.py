@@ -3,10 +3,10 @@ from sqlalchemy import text
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select
 from qry_generation_trsch import formatAirports
 
-# # Define your PostgreSQL database connection
+# PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
 
-# # Create an SQLAlchemy engine
+# SQLAlchemy engine
 engine = create_engine(db_uri, echo=False)
 conn = engine.connect()
 
@@ -16,13 +16,82 @@ def generateAl(origin, orig_continent, destination):
     print(f"Producing top airlines in terms of {formatAirports(origin)} to {formatAirports(destination)}")
     variables = topal_df['airline'].tolist()
     print(topal_df)
+    talpax_df = pd.DataFrame()
+    taly_df = pd.DataFrame()
+    talr_df = pd.DataFrame()
     for vara in variables:
-        print(destination)
-        print(generateAlMonth(vara, orig_continent, origin, destination))
-    return topal_df
+        alqry = generateAlMonthpax(vara, orig_continent, origin, destination)
+        t_df = pd.read_sql_query(text(alqry), conn)
+        if talpax_df.empty:
+            talpax_df = t_df
+        else:
+            talpax_df = talpax_df.merge(t_df, on = 'month', how = 'inner')
+    
+    for vara in variables:
+        alqry = generateAlMonthy(vara, orig_continent, origin, destination)
+        t_df = pd.read_sql_query(text(alqry), conn)
+        if taly_df.empty:
+            taly_df = t_df
+        else:
+            taly_df = taly_df.merge(t_df, on = 'month', how = 'inner')
 
-def generateAlMonth(airline, continent, orig, dest):
+    for vara in variables:
+        alqry = generateAlMonthr(vara, orig_continent, origin, destination)
+        t_df = pd.read_sql_query(text(alqry), conn)
+        if talr_df.empty:
+            talr_df = t_df
+        else:
+            talr_df = talr_df.merge(t_df, on = 'month', how = 'inner')
 
+    return (topal_df, talpax_df, taly_df, talr_df)
+
+def generateAlMonthy(airline, continent, orig, dest):
+    if len(dest) == 0 or dest[0] == '':
+        return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                avg("Yield") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
+                group by "Year-Month-Day"
+                """
+    
+    return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                avg("Yield") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Dest" IN {formatAirports(dest)}
+                AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
+                group by "Year-Month-Day"
+                """
+
+def generateAlMonthr(airline, continent, orig, dest):
+    if len(dest) == 0 or dest[0] == '':
+        return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                avg("Rev") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
+                group by "Year-Month-Day"
+                """
+    
+    return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
+                avg("Rev") as {airline} 
+                FROM cirium_traffic_{continent}
+                WHERE "Year-Month-Day" >= '2022-01-01'
+                AND "Orig" IN {formatAirports(orig)}
+                AND "Dest" IN {formatAirports(dest)}
+                AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
+                group by "Year-Month-Day"
+                """
+
+def generateAlMonthpax(airline, continent, orig, dest):
     if len(dest) == 0 or dest[0] == '':
         return f"""SELECT DISTINCT ON (DATE_TRUNC('month',"Year-Month-Day")) DATE_TRUNC('month', "Year-Month-Day")as month, 
                 sum("Total Pax") as {airline} 
@@ -30,6 +99,7 @@ def generateAlMonth(airline, continent, orig, dest):
                 WHERE "Year-Month-Day" >= '2022-01-01'
                 AND "Orig" IN {formatAirports(orig)}
                 AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
                 group by "Year-Month-Day"
                 """
     
@@ -40,6 +110,7 @@ def generateAlMonth(airline, continent, orig, dest):
                 AND "Orig" IN {formatAirports(orig)}
                 AND "Dest" IN {formatAirports(dest)}
                 AND "Op Al" IN ('{airline}')
+                AND "Stop-1 Airport" IS NULL
                 group by "Year-Month-Day"
                 """
 

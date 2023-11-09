@@ -1,8 +1,9 @@
 import pandas as pd
-
+from datetime import *
 import matplotlib.pyplot as plt
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
+from reportlab.platypus.flowables import KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.tables import Table, TableStyle
@@ -12,6 +13,7 @@ from statsmodels.tsa.arima.model import ARIMA
 
 images_and_captions = []
 images_and_captionsal = []
+date_format = "%Y-%m-%d"
 
 def formatPNGdf(df):
     totalPax(df)
@@ -78,7 +80,7 @@ def alyield(df):
 def totalPax(df):
     df['Trend'] = df['pax'].rolling(window = 4).mean()
     plt.plot(df['month'], df['pax'], label = 'Monthly total pax', color='#294173')
-    plt.plot(df['month'], df['Trend'], label='12-Month time series Trend', color='red', linestyle='--')
+    plt.plot(df['month'], df['Trend'], label='4-Month time series Trend', color='red', linestyle='--')
     
     model = ARIMA(df['pax'], order=(4,1,0))
     model_fit = model.fit()
@@ -86,10 +88,8 @@ def totalPax(df):
 
     last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
-    print(forecast)
-    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the total monthly passenger is {df.iloc[-1,2]}. \n"""
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
     plt.title('Monthly Total PAX with trend and forecast')
     plt.legend()
@@ -97,19 +97,44 @@ def totalPax(df):
     plt.ylabel('total pax')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('sum_pax.png')
+    max = df.loc[df['pax'].idxmax()]
+    min = df.loc[df['pax'].idxmin()]
+    paragraphstr = f"""This shows the total passengers traveled per month in this route. The highest number of passenger 
+                        per month is {max['pax']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest number of passenger per month is {min['pax']}, which happened in {min['month'].to_period(freq = 'M')}
+                          As of {df.iloc[-1,0]}, the total monthly passenger is {df.iloc[-1,2]}. \n"""
     images_and_captions.append({'image_path': 'sum_pax.png',
                                 'caption': 'Monthly total passengers from desired route',
                                 'para':paragraphstr})
     plt.show()
 
 def avgYields(df):
-    df.plot(kind = 'line', x = 'month', y= 'yield', c = '#294173', legend = False)
+    df['Trend'] = df['yield'].rolling(window = 4).mean()
+    plt.plot(df['month'], df['yield'], label = 'Monthly average yield', color='#294173')
+    plt.plot(df['month'], df['Trend'], label='4-Month time series Trend', color='red', linestyle='--')
+
+    model = ARIMA(df['yield'], order=(4,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df.iloc[-1,0]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
     plt.title('Monthly Average Yields')
+    plt.legend()
     plt.xlabel('date')
     plt.ylabel('Average Yields')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_yields.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
+
+    max = df.loc[df['yield'].idxmax()]
+    min = df.loc[df['yield'].idxmin()]
+    paragraphstr = f"""This graph shows the average yield traveled per month in this route. The highest average yielded
+                        per month is {max['yield']} %, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest average revenue per month is {min['yield']} %, which happened in {min['month'].to_period(freq = 'M')}
+                        As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
     images_and_captions.append({'image_path': 'avg_yields.png', 
                                 'caption': 'Monthly average yield from desired route',
                                 'para': paragraphstr})
@@ -117,14 +142,32 @@ def avgYields(df):
     plt.show()
 
 def totalSeats(df):
-    df.plot(kind = 'line', x = 'month', y= 'seats', c = '#294173', legend = False)
+    df['Trend'] = df['seats'].rolling(window = 4).mean()
+    plt.plot(df['month'], df['seats'], label = 'Monthly average seats', color='#294173')
+    plt.plot(df['month'], df['Trend'], label='4-Month time series Trend', color='red', linestyle='--')
+
+    model = ARIMA(df['seats'], order=(4,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df.iloc[-1,0]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+    
     plt.title('Monthly Total Seats')
     plt.xlabel('month-year')
+    plt.legend()
     plt.ylabel('Total Seats')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.ticklabel_format(style = 'plain', axis = 'y')
     plt.savefig('sum_seats.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the total monthly seats is {df.iloc[-1,5]}. \n"""
+    max = df.loc[df['seats'].idxmax()]
+    min = df.loc[df['seats'].idxmin()]
+    paragraphstr = f"""This graph shows the total seats provided for this route per month. The highest number of seats 
+                        per month is {max['seats']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest number of seats per month is {min['seats']}, which happened in {min['month'].to_period(freq = 'M')}
+                        As of {df.iloc[-1,0]}, the total monthly seats is {df.iloc[-1,5]}. \n"""
     images_and_captions.append({'image_path': 'sum_seats.png', 
                                 'caption': 'Monthly sum of seats from desired route',
                                 'para':paragraphstr})
@@ -144,27 +187,52 @@ def rev(df):
     print(forecast)
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
-    # df.plot(kind = 'line', x = 'month', y= 'rev', c = '#294173', legend = False)
     plt.title('Monthly Average Revenue')
     plt.legend()
     plt.xlabel('month-year')
     plt.ylabel('Average Revenue')
     plt.grid(color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_rev.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly revenue is {df.iloc[-1,4]}. \n"""
+    max = df.loc[df['rev'].idxmax()]
+    min = df.loc[df['rev'].idxmin()]
+    paragraphstr = f"""This graph shows the average revenue per month in this route. The highest revenue averaged per month 
+                        is {max['rev']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest revenue averaged per month is {min['rev']}, which happened in {min['month'].to_period(freq = 'M')}
+                        As of {df.iloc[-1,0]}, the average monthly revenue is {df.iloc[-1,4]}. \n"""
     images_and_captions.append({'image_path': 'avg_rev.png',
                                  'caption': 'Monthly average revenue from desired route',
                                  'para':paragraphstr})
     plt.show()
     
 def porig(df):
-    df.plot(kind = 'line', x = 'month', y= 'porig', c = '#294173', legend = False)
-    plt.title('Average Passenger of Origin')
-    plt.xlabel('month-year')
-    plt.ylabel('% Passenger of Origin')
+    df['Trend'] = df['porig'].rolling(window = 4).mean()
+    plt.plot(df['month'], df['porig'], label = 'Monthly average %poo origin', color='#294173')
+    plt.plot(df['month'], df['Trend'], label='4-Month time series Trend', color='red', linestyle='--')
+    
+    model = ARIMA(df['porig'], order=(4,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps = 12)
+
+    last_date = df.iloc[-1,0]
+    forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
+    plt.title('Monthly average %poo origin with trend and forecast')
+    plt.legend()
+    plt.xlabel('date')
+    plt.ylabel('%poo origin')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_poo.png')
-    paragraphstr = f"""As of {df.iloc[-1,0]}, the average monthly passenger of origin in percentage is {df.iloc[-1,3]}. \n"""
+    max = df.loc[df['porig'].idxmax()]
+    min = df.loc[df['porig'].idxmin()]
+
+    plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+    paragraphstr = f"""This graph shows the average passenger of origin in this route, which indicates the amount 
+                    of passenger with residency from the country this flight departed from.
+                        The highest percentage of passenger of origin 
+                        per month is {max['porig']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest percentage of passenger of origin per month is {min['porig']}, which happened in {min['month'].to_period(freq = 'M')}
+                        As of {df.iloc[-1,0]}, the average monthly passenger of origin in percentage is {df.iloc[-1,3]}. \n"""
     images_and_captions.append({'image_path': 'avg_poo.png', 
                                 'caption': 'Monthly average passenger of origin from desired route',
                                 'para': paragraphstr})
@@ -209,30 +277,36 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     intro = Paragraph(intro_generation(origin, dest))
     story.append(intro)
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
-    
+
+    secpstr = """
+            The first part of this report displays the total number of passenger passenger, 
+            average yield, total seats available, average revenue, average monthly passenger of origin, and 
+            average available seats kilometer. Each graph will include a time series trend, which indicates
+            """
+
 
     styles = getSampleStyleSheet()
     centered_style = ParagraphStyle(name='CenteredStyle', parent=styles['Normal'], alignment=TA_CENTER)
-    
+    story.append(Spacer(1, 0.2*inch))  
     for item in images_and_captions:
+        tempstry = []
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)
         p = item.get('para')
         print(item.keys())
         pgraph = Paragraph(p, styles['Normal'])
-        story.append(pgraph)
+        
         data = [[image], [caption]]
         table = Table(data)
-        
+
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.white),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER')
         ]))
-        
-        
-        story.append(table)
-        story.append(Spacer(1, 0.2*inch))  
-
+        tempstry.append(pgraph)
+        tempstry.append(table)
+        tempstry.append(Spacer(1,0.2*inch))
+        story.append(KeepTogether(tempstry))
     for item in images_and_captionsal:
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)

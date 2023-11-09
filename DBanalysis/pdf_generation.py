@@ -1,7 +1,6 @@
 import pandas as pd
 
 import matplotlib.pyplot as plt
-
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -9,7 +8,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.tables import Table, TableStyle
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
-
 from statsmodels.tsa.arima.model import ARIMA
 
 images_and_captions = []
@@ -46,6 +44,7 @@ def alpax(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Total_Pax_AL.png')
+    paragraphstr = f"""As of {df.iloc[-1,0]},"""
     images_and_captionsal.append({'image_path': 'Total_Pax_AL.png', 'caption': 'Monthly total passengers from airlines with the most passenger'})
     plt.show()
 
@@ -88,6 +87,8 @@ def totalPax(df):
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
     print(forecast)
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
+
+    paragraphstr = f"""As of {df.iloc[-1,0]}, the total monthly passenger is {df.iloc[-1,2]}. \n"""
 
     plt.title('Monthly Total PAX with trend and forecast')
     plt.legend()
@@ -196,6 +197,24 @@ def add_images_and_captions(df, aldf, origin, dest, pdf_filename, images_and_cap
     centered_style = ParagraphStyle(name='CenteredStyle', parent=styles['Normal'], alignment=TA_CENTER)
     
     for item in images_and_captions:
+        image = Image(item['image_path'], width=4*inch, height=3*inch)
+        caption = Paragraph(item['caption'], centered_style)
+        
+        data = [[image], [caption]]
+        table = Table(data)
+        
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ]))
+        para = Paragraph(f"This is a paragraph before the table", styles['Normal'])
+        story.append(para)
+        story.append(table)
+        story.append(Spacer(1, 0.2*inch))  
+
+    for item in images_and_captionsal:
         image = Image(item['image_path'], width=4*inch, height=3*inch)
         caption = Paragraph(item['caption'], centered_style)
         

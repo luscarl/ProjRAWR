@@ -20,7 +20,7 @@ def generateTRSC(origin, orig_continent, destination):
     schedule_df = pd.read_sql_query(text(sqry), conn)
     print(f"Produced monthly traffic data from {formatAirports(origin)} to {formatAirports(destination)}")
     trsch_df = traffic_df.merge(schedule_df, on = 'month', how = 'inner')
-    print(schedule_df)
+    print("Finished processing traffic & schedule data, proceding to airline data....")
     return trsch_df
 
 def formatAirports(aps):

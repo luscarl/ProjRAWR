@@ -14,7 +14,7 @@ def generateAl(origin, orig_continent, destination):
     topal_df = pd.read_sql_query(text(final), conn)
     print(f"Producing top airlines in terms of {formatAirports(origin)} to {formatAirports(destination)}")
     variables = topal_df['airline'].tolist()
-    print(topal_df)
+    print("Determined top airlines flying this route, proceding to fetch airline data ..")
     talpax_df = pd.DataFrame()
     taly_df = pd.DataFrame()
     talr_df = pd.DataFrame()

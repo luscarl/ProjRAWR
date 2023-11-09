@@ -31,7 +31,7 @@ def formatPNGal(df):
 
 
 def formatPDF(trdf, aldf, rdf, origin, dest):
-    print(trdf)
+    
     (topal, talpax, taly, talrev) = aldf
     formatPNGdf(trdf)
     formatPNGal(aldf)
@@ -48,11 +48,10 @@ def alpax(df):
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Total_Pax_AL.png')
 
-    max_last = df.iloc[-1, 1:].idxmax()
-    min_last = df.iloc[-1, 1:].idxmin()
-    paragraphstr = f"""This graph indicates the total passengers per month grouped by airlines.
-                    As of {df.iloc[-1,0]},the airline with the most passenger per month in this route is {max_last}, and the 
-                    airline with the least passenger per month in this route is {min_last}"""
+    max_last = df.loc[:, df.columns != 'month'].idxmax()
+    min_last = df.loc[:, df.columns != 'month'].idxmin()
+    
+    paragraphstr = f"""This graph indicates the total passengers per month grouped by airlines."""
     
     images_and_captionsal.append({'image_path': 'Total_Pax_AL.png', 
                                   'caption': 'Monthly total passengers from airlines with the most passenger',
@@ -69,11 +68,9 @@ def alrev(df):
     plt.xlabel('date')
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_Rev_AL.png')
-    max_last = df.iloc[-1, 1:].idxmax()
-    min_last = df.iloc[-1, 1:].idxmin()
-    paragraphstr = f"""This graph indicates the average revenue per month grouped by airlines.
-                    As of {df.iloc[-1,0]},the airline with the highest average revenue per month in this route is {max_last}, and the 
-                    airline with the lowest average revenue per month in this route is {min_last}"""
+    max_last = df.loc[:, df.columns != 'month'].idxmax()
+    min_last = df.loc[:, df.columns != 'month'].idxmin()
+    paragraphstr = f"""This graph indicates the average revenue per month grouped by airlines."""
     images_and_captionsal.append({'image_path': 'Avg_Rev_AL.png',
                                    'caption': 'Monthly average revenue from airlines with the most passenger',
                                    'para':paragraphstr})
@@ -90,11 +87,9 @@ def alyield(df):
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_yield_AL.png')
 
-    max_last = df.iloc[-1, 1:].idxmax()
-    min_last = df.iloc[-1, 1:].idxmin()
-    paragraphstr = f"""This graph indicates the average yield per month grouped by airlines.
-                    As of {df.iloc[-1,0]},the airline with the average yield per month in this route is {max_last}, and the 
-                    airline with the lowest average yield per month in this route is {min_last}"""
+    max_last = df.loc[:, df.columns != 'month'].idxmax()
+    min_last = df.loc[:, df.columns != 'month'].idxmin()
+    paragraphstr = f"""This graph indicates the average yield per month grouped by airlines."""
     
     images_and_captionsal.append({'image_path': 'Avg_yield_AL.png',
                                    'caption': 'Monthly average yield from airlines with the most passenger',
@@ -233,7 +228,7 @@ def rev(df):
 
     last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
-    print(forecast)
+    
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
     plt.title('Monthly Average Revenue')
@@ -314,7 +309,7 @@ def ask(df):
 
     last_date = df.iloc[-1,0]
     forecast_dates = pd.date_range(start = last_date, periods = 12, inclusive = 'right', freq = 'M')
-    print(forecast)
+    
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
     # df.plot(kind = 'line', x = 'month', y= 'ask', c = '#294173', legend = False)

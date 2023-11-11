@@ -4,6 +4,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 import matplotlib.pyplot as plt
 from matplotlib import ticker
+import numpy as np
+
 
 # # Define your PostgreSQL database connection
 db_uri = 'postgresql://student003:chihrusvfnihdipp@dataviation-database-1.chl8zbfpbhhh.ap-southeast-2.rds.amazonaws.com/dataviation_tutorial'
@@ -25,14 +27,14 @@ print(am_df3)
 dfs = [am_df, am_df1, am_df2, am_df3]
 dfs = [df.set_index('month') for df in dfs]
 result=dfs[0].join(dfs[1:])
-
 print(result)
 
 plt.plot(result)
 plt. legend(['QF','AA','UA','DL'])
-plt. title('Monthly Total PAX by airlines')
-plt.xlabel('date')
-plt. ylabel('total pax')
+plt. title('Monthly Total PAX from QF, AA, UA and DL')
+plt.xlabel('Date')
+plt.xticks(rotation = 75)
+plt. ylabel('Total PAX')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_paxAL.png')
 plt.show()
@@ -57,9 +59,10 @@ print(answer)
 
 plt.plot(answer)
 plt. legend(['QF','AA','UA','DL'])
-plt. title('Monthly Average Yield by airlines')
-plt.xlabel('date')
-plt. ylabel('average yield')
+plt. title('Monthly Average Yield from QF, AA, UA and DL')
+plt.xlabel('Date')
+plt.xticks(rotation = 75)
+plt. ylabel('Average Yield')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('avg_yieldAL.png')
 plt.show()
@@ -83,10 +86,10 @@ print(final)
 
 plt.plot(final)
 plt. legend(['QF','AA','UA','DL'])
-plt. title('Monthly Total Seats by airlines')
-plt.xlabel('date')
-plt. ylabel('total seats')
+plt. title('Monthly Total Seats from QF, AA, UA and DL')
+plt.xlabel('Date')
+plt.xticks(rotation = 75)
+plt. ylabel('Total Seats')
 plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
 plt.savefig('sum_seatsAL.png')
-plt.ticklabel_format(style = 'Plain', axis = 'y')
 plt.show()

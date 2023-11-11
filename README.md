@@ -53,12 +53,15 @@ If your terminal shows that pip did not exist, do the following: \n
   international airports all over Australia. Also note that the the airports of destination should be within Australia.
 
   Finally, the program will run and produce the output pdf in output.pdf in the directory.
+  \n
+
+  **note**: There will be graphs popping out after run. It is expected behavior, simply close all the graphs. The resulting pdf is named output.pdf and everytime this script is run, it will be automatically updated.
 
 ## Contributing
   Avinash Dansinghani \n
   Coco Wu \n
   Lucy Lu lucyluhk@gmail.com (enquiries about usage and problems) \n
 
-  
+
   
   

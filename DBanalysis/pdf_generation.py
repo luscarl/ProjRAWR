@@ -31,7 +31,6 @@ def formatPNGal(df):
 
 
 def formatPDF(trdf, aldf, rdf, origin, dest):
-    
     (topal, talpax, taly, talrev) = aldf
     formatPNGdf(trdf)
     formatPNGal(aldf)

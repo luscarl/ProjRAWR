@@ -41,7 +41,10 @@ def generateAl(origin, orig_continent, destination):
             talr_df = t_df
         else:
             talr_df = talr_df.merge(t_df, on = 'month', how = 'inner')
-
+    
+    talpax_df.columns = [talpax_df.columns[0]] + [col.upper() for col in talpax_df.columns[1:]]
+    taly_df.columns = [taly_df.columns[0]] + [col.upper() for col in taly_df.columns[1:]]
+    talr_df.columns = [talr_df.columns[0]] + [col.upper() for col in talr_df.columns[1:]]
     return (topal_df, talpax_df, taly_df, talr_df)
 
 def generateAlMonthy(airline, continent, orig, dest):
@@ -123,6 +126,7 @@ def getairline1(continent):
 
 def getairline2(orig, dest):
     finalstr = """
+    AND "Year-Month-Day" > '2022-01-01'
     Group by airline
     Order by total_pax DESC
     limit 4;

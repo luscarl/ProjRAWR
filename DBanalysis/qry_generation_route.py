@@ -28,5 +28,3 @@ def generateR(origin, orig_continent, destination):
     eg_df = pd.read_sql_query(text(qry), conn)
     print(eg_df)
     return eg_df
-
-generateR('HI','W','L')

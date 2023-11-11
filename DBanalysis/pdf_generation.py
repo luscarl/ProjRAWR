@@ -150,18 +150,18 @@ def avgYields(df):
 
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
-    plt.title('Monthly Average Yields')
+    plt.title('Monthly Average Yield')
     plt.legend()
     plt.xlabel('date')
-    plt.ylabel('Average Yields')
+    plt.ylabel('Average Yield')
     plt.grid( color = 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('avg_yields.png')
 
     max = df.loc[df['yield'].idxmax()]
     min = df.loc[df['yield'].idxmin()]
-    paragraphstr = f"""This graph shows the average yield traveled per month in this route. The highest average yielded
-                        per month is {max['yield']*100} %, which happened in {max['month'].to_period(freq = 'M')}.
-                        The lowest average revenue per month is {min['yield']*100} %, which happened in {min['month'].to_period(freq = 'M')}
+    paragraphstr = f"""This graph shows the average yield traveled per month in this route. The highest average yield
+                        per month is {max['yield']}, which happened in {max['month'].to_period(freq = 'M')}.
+                        The lowest average revenue per month is {min['yield']}, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
     lastrow = df.iloc[-1]
     seclastrow = df.iloc[-2]

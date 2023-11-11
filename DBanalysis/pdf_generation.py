@@ -44,6 +44,7 @@ def alpax(df):
     plt.legend()
     plt.title('Monthly Total Pax by airlines')
     plt.xlabel('date')
+    plt.xticks(rotation = 75)
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Total_Pax_AL.png')
 
@@ -65,6 +66,7 @@ def alrev(df):
     plt.legend()
     plt.title('Monthly average revenue by airlines')
     plt.xlabel('date')
+    plt.xticks(rotation = 75)
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_Rev_AL.png')
     max_last = df.loc[:, df.columns != 'month'].idxmax()
@@ -83,6 +85,7 @@ def alyield(df):
     plt.legend()
     plt.title('Monthly average yield by airlines')
     plt.xlabel('date')
+    plt.xticks(rotation = 75)
     plt. grid(axis= 'y', color= 'grey', linestyle = '--', linewidth = 0.5)
     plt.savefig('Avg_yield_AL.png')
 

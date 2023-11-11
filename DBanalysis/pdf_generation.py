@@ -159,9 +159,9 @@ def avgYields(df):
 
     max = df.loc[df['yield'].idxmax()]
     min = df.loc[df['yield'].idxmin()]
-    paragraphstr = f"""This graph shows the average yield traveled per month in this route. The highest average yield
+    paragraphstr = f"""This graph shows the average yield per month in this route. The highest average yield
                         per month is {max['yield']}, which happened in {max['month'].to_period(freq = 'M')}.
-                        The lowest average revenue per month is {min['yield']}, which happened in {min['month'].to_period(freq = 'M')}
+                        The lowest average yield per month is {min['yield']}, which happened in {min['month'].to_period(freq = 'M')}
                         As of {df.iloc[-1,0]}, the average monthly yield is {df.iloc[-1,1]}. \n"""
     lastrow = df.iloc[-1]
     seclastrow = df.iloc[-2]

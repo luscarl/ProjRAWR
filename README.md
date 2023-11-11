@@ -1,4 +1,4 @@
-# Scifproject for Tourism Australia
+# Scif project for Tourism Australia
 
 ## Description
 

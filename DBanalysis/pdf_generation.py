@@ -321,7 +321,7 @@ def ask(df):
     plt.plot(forecast_dates, forecast, label = '12-Month Forecast', linestyle = '--')
 
     # df.plot(kind = 'line', x = 'month', y= 'ask', c = '#294173', legend = False)
-    plt.title('Average ASK')
+    plt.title('Monthly average ASK')
     plt.legend()
     plt.xlabel('Date')
     plt.ylabel('Average ASK')
@@ -343,7 +343,7 @@ def ask(df):
     elif (lastrow['Trend'] < seclastrow['Trend']):
         paragraphstr = paragraphstr + "There is a general downward trend according to the trend present in available seat kilometers. Please note this is just a prediction, it may not be 100% accurate. "
 
-    images_and_captions.append({'image_path': 'sum_pax.png',
+    images_and_captions.append({'image_path': 'avg_ask.png',
                                 'caption': 'Monthly total passengers from desired route',
                                 'para':paragraphstr})
     plt.show()

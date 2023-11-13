@@ -57,6 +57,10 @@ If your terminal shows that pip did not exist, do the following: <br>
 
   **note**: There will be graphs popping out after run. It is expected behavior, simply close all the graphs. The resulting pdf is named output.pdf and everytime this script is run, it will be automatically updated.
 
+## Notes of usage:
+  This code is based on pgSQL database provided by cirium. It may not work on databases with different column and table names. <br>
+  To adjust the dtaabase this code is reading from, change the database URI by adjusting the db_uri variable.
+
 ## Contributing
   Avinash Dansinghani <br>
   Coco Wu <br>

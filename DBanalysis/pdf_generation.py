@@ -479,4 +479,7 @@ def alstr_generation(origin, dest, aldf):
     gstr = f""" The second part of this report analyses the top 4 airlines with the most passengers travelling 
                 from {originstr} to {deststr} are {alstr}, which includes total passengers, average yield and average revenue."""
 
+    if (len(dest) == 0):
+        return f""" The second part of this report analyses the top 4 airlines with the most passengers travelling 
+                from {originstr} are {alstr}, which includes total passengers, average yield and average revenue."""
     return gstr

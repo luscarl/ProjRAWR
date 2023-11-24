@@ -12,7 +12,7 @@ data on trend and forecast.
 - [Contributing](#contributing)
 
 ## Installation
-This project requires some python libraries for it's functionality. Please make sure you have python3 properly installed on your machine, as well 
+This project requires some python libraries for its functionality. Please make sure you have python3 properly installed on your machine, as well 
 as the following libraries.
   - postgresql
   - sqlalchemy
